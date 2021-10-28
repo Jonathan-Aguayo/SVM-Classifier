@@ -13,7 +13,7 @@ from sklearn.preprocessing import StandardScaler
 
 
 print("starting...")
-dir = '/mnt/c/Users/jonat/OneDrive/Documents/Fall 2021-DESKTOP-8GJ23H3/CMPE 188/Hw2/SVM Image classifier/cmpe188image-classification/cmpe188_train/cmpe188_train' 
+dir = '/home/jonathan/cmpe188/SVM-Classifier/cmpe188_train/cmpe188_train' 
 
 categories = ['buildings', 'street', 'glacier','forest', 'mountain', 'sea']
 param_grid = {'C': [0.01, 0.1, 1, 10, 100, 1000] ,'gamma': [0.0001, 0.001, 0.01, 0.1, 1], 'kernel': ['rbf', 'linear', 'sigmoid', 'poly']}
@@ -28,7 +28,7 @@ for category in categories:
     for img in os.listdir(path):
         imagePath= os.path.join(path, img)
         objectImage = cv2.imread(imagePath, 0)
-        objectImage = cv2.resize(objectImage, (150,150))
+        objectImage = cv2.resize(objectImage, (32,32))
         finalImage = np.array(objectImage).flatten()
         data.append([finalImage, label])
 
@@ -47,29 +47,30 @@ scalar.fit_transform(xtrain)
 xtrain = scalar.transform(xtrain)
 xtest = scalar.transform(xtest)
 
-pca = PCA(.80)
+pca = PCA(.60)
 pca.fit(xtrain)
 print(pca.n_components_)
 
-print('training...')
-model.fit(xtrain, ytrain)
+
+print('loading model...')
+#model.fit(xtrain, ytrain)
 
 #Saving the model to our directory so we dont have to train it every time this program runs
 # As os 10/21/21 8:30 PM. The model was trained using test size of 0.98, so it may not be very accurate
-pick = open('nonPCATestSize0.15.wav', 'wb')
-pickle.dump(model, pick)
-pick.close()
+#pick = open('nonPCATestSize0.15.wav', 'wb')
+#pickle.dump(model, pick)
+#pick.close()
 
 # opening model again later
-# pick = open('/mnt/c/Users/jonat/OneDrive/Documents/Fall 2021-DESKTOP-8GJ23H3/CMPE 188/Hw2/model.sav', 'rb')
-# model = pickle.load(pick)
-# pick.close()
+pick = open('/home/jonathan/cmpe188/SVM-Classifier/model.sav', 'rb')
+model = pickle.load(pick)
+pick.close()
 
 prediction = model.predict(xtest)
 Accuracy = model.score (xtest, ytest)
 print('Prediction is: ' + str(categories[prediction[0]]))
 print('Accuracy: ' + str(Accuracy))
-plt.imshow(xtest[0].reshape(150,150), cmap='gray')
+plt.imshow(xtest[0].reshape(32,32), cmap='gray')
 plt.show()
 
 
