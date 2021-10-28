@@ -29,7 +29,7 @@ for img in os.listdir(dir):
     objectImage = cv2.resize(objectImage, (150,150))
     finalImage = np.array(objectImage).flatten()
     prediction  = model.predict([finalImage])
-    row = [img, categories[prediction[0]]]
+    row = [img.replace(".jpg", ""), categories[prediction[0]]]
     with open(filename, 'a') as csvfile:
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(row)
